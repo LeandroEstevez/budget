@@ -55,7 +55,6 @@ function App() {
 
     login(body);
   };
-
   const login = async (body) => {
     const res = await fetch("http://localhost:8080/user/login", {
       method: "POST",
@@ -70,7 +69,50 @@ function App() {
             throw new Error(text);
           });
         } else {
-          navigate("Account");
+          return response.json();
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
+
+    if (res !== undefined) {
+      res.user.access_token = res.access_token;
+      setAccount({ ...res.user });
+      console.log(account);
+      getExpensesFromServer(account.username);
+      navigate("Account");
+    }
+  };
+
+  // Update expenses
+  const updateExpenseAdd = (newExpense) => {
+    setExpenses([...expenses, newExpense]);
+    console.log(expenses);
+  };
+  const updateExpenseDelete = (id) => {
+    setExpenses(expenses.filter((expense) => expense.id !== id));
+    console.log(expenses);
+  };
+
+  // Get expenses from server
+  const getExpensesFromServer = async (username) => {
+    const res = await fetch(
+      `http://localhost:8080/entries?username=${username}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${account.access_token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
           return response.json();
         }
       })
@@ -79,9 +121,7 @@ function App() {
       });
 
     console.log(res);
-    res.user.access_token = res.access_token;
-    setAccount({ ...res.user });
-    console.log(account);
+    setExpenses([...expenses, ...res]);
   };
 
   const navigate = useNavigate();
@@ -96,7 +136,14 @@ function App() {
         <Route path="/login" element={<Login login={loginToAccount} />}></Route>
         <Route
           path="account"
-          element={<Account account={account} expenses={expenses} />}
+          element={
+            <Account
+              account={account}
+              expenses={expenses}
+              updateExpenseAdd={updateExpenseAdd}
+              updateExpenseDelete={updateExpenseDelete}
+            />
+          }
         ></Route>
       </Routes>
     </div>

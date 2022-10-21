@@ -5,7 +5,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
-const CreateExpense = ({ account }) => {
+const CreateExpense = ({ account, updateExpenses }) => {
   const [name, setName] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [amount, setAmount] = useState(0);
@@ -40,7 +40,7 @@ const CreateExpense = ({ account }) => {
         console.log("caught it!", err);
       });
 
-    console.log(res);
+    updateExpenses(res.entry);
   };
 
   return (
