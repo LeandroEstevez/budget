@@ -1,14 +1,14 @@
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import FormControl from "@mui/material/FormControl";
-import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
-const CreateExpense = ({ account, updateExpenses }) => {
+const CreateExpense = ({ account, updateExpenseAdd }) => {
   const [name, setName] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
 
   // Create expense to send to server
   const createExpenseObject = async (name, dueDate, amount) => {
@@ -40,51 +40,56 @@ const CreateExpense = ({ account, updateExpenses }) => {
         console.log("caught it!", err);
       });
 
-    updateExpenses(res.entry);
+    updateExpenseAdd(res.entry);
   };
 
   return (
-    <>
-      <Container maxWidth="sm">
-        <Paper elevation={3}>
-          <h1>Create expense</h1>
-          <FormControl>
-            <TextField
-              label="Name"
-              variant="outlined"
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
-          </FormControl>
-          <FormControl>
-            <TextField
-              label="Due Date"
-              variant="outlined"
-              onChange={(e) => {
-                setDueDate(e.target.value);
-              }}
-            />
-          </FormControl>
-          <FormControl>
-            <TextField
-              label="Amount"
-              variant="outlined"
-              onChange={(e) => {
-                setAmount(parseFloat(e.target.value));
-                console.log(amount);
-              }}
-            />
-          </FormControl>
-          <Button
-            variant="contained"
-            onClick={() => createExpenseObject(name, dueDate, amount)}
-          >
-            Submit
-          </Button>
-        </Paper>
-      </Container>
-    </>
+    <Container maxWidth="sm">
+      <h1>Create expense</h1>
+      <Stack spacing={2}>
+        <FormControl>
+          <TextField
+            label="Name"
+            variant="outlined"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+          />
+        </FormControl>
+        <FormControl>
+          <TextField
+            label="Due Date"
+            variant="outlined"
+            value={dueDate}
+            onChange={(e) => {
+              setDueDate(e.target.value);
+            }}
+          />
+        </FormControl>
+        <FormControl>
+          <TextField
+            label="Amount"
+            variant="outlined"
+            value={amount}
+            onChange={(e) => {
+              setAmount(parseFloat(e.target.value));
+            }}
+          />
+        </FormControl>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setName("");
+            setDueDate("");
+            setAmount("");
+            createExpenseObject(name, dueDate, amount);
+          }}
+        >
+          Submit
+        </Button>
+      </Stack>
+    </Container>
   );
 };
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import Container from "@mui/material/Container";
+import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import Account from "./pages/Account";
@@ -8,6 +9,10 @@ import Login from "./pages/Login";
 function App() {
   const [account, setAccount] = useState({});
   const [expenses, setExpenses] = useState([]);
+
+  useEffect(() => {
+    getExpensesFromServer(account.username);
+  }, [account]);
 
   // Create account object to send to server
   const createAccountObject = (userName, fullName, email, password) => {
@@ -42,18 +47,20 @@ function App() {
         console.log("caught it!", err);
       });
 
-    console.log(res);
     setAccount({ ...res });
   };
 
   // Login into an account
-  const loginToAccount = (userName, password) => {
+  const loginToAccount = async (userName, password) => {
     const body = {
       username: userName,
       password: password,
     };
 
-    login(body);
+    let data = await login(body);
+    data.user.access_token = data.access_token;
+    setAccount({ ...data.user });
+    navigate("account");
   };
   const login = async (body) => {
     const res = await fetch("http://localhost:8080/user/login", {
@@ -76,23 +83,26 @@ function App() {
         console.log("caught it!", err);
       });
 
-    if (res !== undefined) {
-      res.user.access_token = res.access_token;
-      setAccount({ ...res.user });
-      console.log(account);
-      getExpensesFromServer(account.username);
-      navigate("Account");
-    }
+    return res;
   };
 
   // Update expenses
   const updateExpenseAdd = (newExpense) => {
     setExpenses([...expenses, newExpense]);
-    console.log(expenses);
   };
   const updateExpenseDelete = (id) => {
     setExpenses(expenses.filter((expense) => expense.id !== id));
-    console.log(expenses);
+  };
+  const updateExpenseEdit = (editedExpense) => {
+    console.log(editedExpense);
+    let updatedExpenses = expenses;
+    updatedExpenses.forEach((item, index) => {
+      if (item.id === editedExpense.id) {
+        updatedExpenses[index] = editedExpense;
+        return;
+      }
+    });
+    setExpenses([...updatedExpenses]);
   };
 
   // Get expenses from server
@@ -120,14 +130,13 @@ function App() {
         console.log("caught it!", err);
       });
 
-    console.log(res);
     setExpenses([...expenses, ...res]);
   };
 
   const navigate = useNavigate();
 
   return (
-    <div className="container">
+    <Container maxWidth="md">
       <Routes>
         <Route
           path="/"
@@ -140,13 +149,14 @@ function App() {
             <Account
               account={account}
               expenses={expenses}
+              updateExpenseEdit={updateExpenseEdit}
               updateExpenseAdd={updateExpenseAdd}
               updateExpenseDelete={updateExpenseDelete}
             />
           }
         ></Route>
       </Routes>
-    </div>
+    </Container>
   );
 }
 
