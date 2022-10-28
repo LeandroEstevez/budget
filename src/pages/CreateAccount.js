@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
-const CreateAccount = ({ createAccountObject }) => {
+const CreateAccount = ({ createAccount }) => {
   const [userName, setUserName] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -57,9 +57,7 @@ const CreateAccount = ({ createAccountObject }) => {
             </FormControl>
             <Button
               variant="contained"
-              onClick={() =>
-                createAccountObject(userName, fullName, email, password)
-              }
+              onClick={() => createAccount(userName, fullName, email, password)}
             >
               Submit
             </Button>
