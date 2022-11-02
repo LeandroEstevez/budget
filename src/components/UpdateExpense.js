@@ -19,23 +19,18 @@ const style = {
 };
 
 const UpdateExpense = ({ isOpen, closeModal, editExpense, targetExpense }) => {
-  const [open, setOpen] = useState(isOpen);
   const [amount, setAmount] = useState("");
-
-  const handleClose = () => {
-    closeModal(true);
-  };
 
   return (
     <div>
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={isOpen}
+        onClose={() => closeModal(true)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Button onClick={handleClose}>Close</Button>
+          <Button onClick={() => closeModal(true)}>Close</Button>
           <h1>Update expense</h1>
           <Stack spacing={2}>
             <FormControl>
@@ -52,6 +47,7 @@ const UpdateExpense = ({ isOpen, closeModal, editExpense, targetExpense }) => {
               variant="contained"
               onClick={() => {
                 editExpense(targetExpense, amount);
+                closeModal(true);
               }}
             >
               Submit

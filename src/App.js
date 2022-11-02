@@ -9,7 +9,6 @@ import Login from "./pages/Login";
 function App() {
   const [account, setAccount] = useState(null);
   const [expenses, setExpenses] = useState([]);
-  const [loginError, setLoginError] = useState(false);
 
   useEffect(() => {
     if (account !== null) {
@@ -79,13 +78,58 @@ function App() {
   };
 
   // Update expenses
-  const updateExpenseAdd = (newExpense) => {
-    setExpenses([...expenses, newExpense]);
+  const deleteExpense = async (id) => {
+    await fetch(`http://localhost:8080/deleteEntry/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${account.access_token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          setExpenses(expenses.filter((expense) => expense.id !== id));
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
   };
-  const updateExpenseDelete = (id) => {
-    setExpenses(expenses.filter((expense) => expense.id !== id));
+  const editExpense = async (item, amount) => {
+    const body = {
+      username: account.username,
+      id: item.id,
+      amount: amount,
+    };
+
+    const res = await fetch("http://localhost:8080/updateEntry", {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${account.access_token}`,
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          return response.json();
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
+
+    updateExpenseArray(res);
   };
-  const updateExpenseEdit = (editedExpense) => {
+  const updateExpenseArray = (editedExpense) => {
     console.log(editedExpense);
     let updatedExpenses = expenses;
     updatedExpenses.forEach((item, index) => {
@@ -95,6 +139,9 @@ function App() {
       }
     });
     setExpenses([...updatedExpenses]);
+  };
+  const addExpense = (newExpense) => {
+    setExpenses([...expenses, newExpense]);
   };
 
   const navigate = useNavigate();
@@ -116,9 +163,9 @@ function App() {
             <Account
               account={account}
               expenses={expenses}
-              updateExpenseEdit={updateExpenseEdit}
-              updateExpenseAdd={updateExpenseAdd}
-              updateExpenseDelete={updateExpenseDelete}
+              editExpense={editExpense}
+              addExpense={addExpense}
+              deleteExpense={deleteExpense}
             />
           }
         ></Route>

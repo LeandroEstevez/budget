@@ -11,68 +11,17 @@ import UpdateExpense from "../components/UpdateExpense";
 const Account = ({
   account,
   expenses,
-  updateExpenseAdd,
-  updateExpenseDelete,
-  updateExpenseEdit,
+  addExpense,
+  deleteExpense,
+  editExpense,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [targetExpense, setTargetExpense] = useState({});
 
   const closeModal = (close) => {
-    close && setModalOpen(false);
-  };
-
-  const deleteExpense = async (id) => {
-    await fetch(`http://localhost:8080/deleteEntry/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${account.access_token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(text);
-          });
-        } else {
-          updateExpenseDelete(id);
-        }
-      })
-      .catch((err) => {
-        console.log("caught it!", err);
-      });
-  };
-  const editExpense = async (item, amount) => {
-    const body = {
-      username: account.username,
-      id: item.id,
-      amount: amount,
-    };
-
-    const res = await fetch("http://localhost:8080/updateEntry", {
-      method: "PATCH",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Bearer ${account.access_token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(text);
-          });
-        } else {
-          return response.json();
-        }
-      })
-      .catch((err) => {
-        console.log("caught it!", err);
-      });
-
-    updateExpenseEdit(res);
-    setModalOpen(false);
+    if (close) {
+      setModalOpen(false);
+    }
   };
 
   return (
@@ -84,7 +33,7 @@ const Account = ({
           <CreateExpense
             account={account}
             expenses={expenses}
-            updateExpenseAdd={updateExpenseAdd}
+            addExpense={addExpense}
           ></CreateExpense>
         ) : (
           <>
@@ -99,7 +48,7 @@ const Account = ({
             <CreateExpense
               account={account}
               expenses={expenses}
-              updateExpenseAdd={updateExpenseAdd}
+              addExpense={addExpense}
             ></CreateExpense>
             <List>
               <h3 className="mb-3 mt-5">Expenses</h3>
