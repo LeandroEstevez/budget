@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
-const CreateExpense = ({ account, updateExpenseAdd }) => {
+const CreateExpense = ({ account, addExpense }) => {
   const [name, setName] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [amount, setAmount] = useState("");
@@ -40,7 +40,7 @@ const CreateExpense = ({ account, updateExpenseAdd }) => {
         console.log("caught it!", err);
       });
 
-    updateExpenseAdd(res.entry);
+    addExpense(res.entry);
   };
 
   return (

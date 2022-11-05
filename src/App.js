@@ -49,6 +49,29 @@ function App() {
     setAccount({ ...res });
   };
 
+  // Delete Acccount
+  const deleteAccount = async (username) => {
+    await fetch(`http://localhost:8080/deleteUser/${username}`, {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${account.access_token}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
+  };
+
   // Get expenses from server
   const getExpenses = async (username) => {
     const res = await fetch(
@@ -166,6 +189,7 @@ function App() {
               editExpense={editExpense}
               addExpense={addExpense}
               deleteExpense={deleteExpense}
+              deleteAccount={deleteAccount}
             />
           }
         ></Route>
