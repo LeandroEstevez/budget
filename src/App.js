@@ -12,8 +12,20 @@ function App() {
 
   useEffect(() => {
     if (account !== null) {
+      console.log("getting expenses")
       getExpenses(account.username);
     }
+  }, [account]);
+
+  useEffect(() => {
+    let acc = JSON.parse(window.localStorage.getItem('account'));
+    if (acc !== null) {
+      setAccount({ ...acc });
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('account', JSON.stringify(account));
   }, [account]);
 
   // Create account object to send to server
@@ -70,6 +82,8 @@ function App() {
       .catch((err) => {
         console.log("caught it!", err);
       });
+
+    setAccount(null);
   };
 
   // Get expenses from server
@@ -97,7 +111,8 @@ function App() {
         console.log("caught it!", err);
       });
 
-    setExpenses([...expenses, ...res]);
+    console.log(res);
+    setExpenses([...res]);
   };
 
   // Update expenses
@@ -122,11 +137,16 @@ function App() {
         console.log("caught it!", err);
       });
   };
-  const editExpense = async (item, amount) => {
+  const editExpense = async (item, name, dueDate, amount, category) => {
+    let date = new Date(dueDate);
+
     const body = {
       username: account.username,
       id: item.id,
-      amount: amount,
+      name: name,
+      due_date: date.toISOString().split('T')[0],
+      amount: parseFloat(amount),
+      category: category
     };
 
     const res = await fetch("http://localhost:8080/updateEntry", {
@@ -153,7 +173,6 @@ function App() {
     updateExpenseArray(res);
   };
   const updateExpenseArray = (editedExpense) => {
-    console.log(editedExpense);
     let updatedExpenses = expenses;
     updatedExpenses.forEach((item, index) => {
       if (item.id === editedExpense.id) {

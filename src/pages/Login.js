@@ -5,12 +5,16 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ setAccount }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [credentialsInvalid, setCredentialsInvalid] = useState(false);
+
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const onSubmit = () => login(userName, password);;
 
   // Login into an account
   const login = async (userName, password) => {
@@ -50,45 +54,52 @@ const Login = ({ setAccount }) => {
 
   const navigate = useNavigate();
 
-  console.log(credentialsInvalid);
-
   return (
     <>
       <Container maxWidth="sm">
         <Paper elevation={3} className="login">
-          <h1>Log In</h1>
-          <Stack spacing={2}>
-            <FormControl margin="normal" required={true}>
-              <TextField
-                error={credentialsInvalid}
-                label="Username"
-                variant="outlined"
-                onChange={(e) => {
-                  setUserName(e.target.value);
-                }}
-              />
-            </FormControl>
-            <FormControl margin="normal" required={true}>
-              <TextField
-                error={credentialsInvalid}
-                type="password"
-                label="Password"
-                variant="outlined"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              />
-            </FormControl>
-            {credentialsInvalid && <h4>Login Incorrect</h4>}
-            <Button
-              variant="contained"
-              onClick={() => {
-                login(userName, password);
-              }}
-            >
-              Submit
+          <Stack direction="row" spacing={2}>
+            <h1>Log In</h1>
+            <Button variant="contained" onClick={() => navigate("/")}>
+              Create Account
             </Button>
           </Stack>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={2}>
+              <FormControl margin="normal" required={true}>
+                <TextField
+                  {...register("username", { required: "This is required", minLength: { value: 6, message: "Minimum length is 6 characters" }, maxLength: { value: 10, message: "Minimum length is 10 characters" }, pattern: { value: /^\w+$/, message: "User name must be in alphanumeric characters" } })}
+                  error={!!errors?.username || credentialsInvalid}
+                  helperText={errors?.username ? errors.username.message : null}
+                  label="Username"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setUserName(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <FormControl margin="normal" required={true}>
+                <TextField
+                  {...register("password", { required: "This is required", minLength: { value: 6, message: "Minimum length is 6 characters" } })}
+                  error={!!errors?.password || credentialsInvalid}
+                  helperText={errors?.password ? errors.password.message : null}
+                  type="password"
+                  label="Password"
+                  variant="outlined"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
+              </FormControl>
+              {credentialsInvalid && <h4>Login Incorrect</h4>}
+              <Button
+                type="submit"
+                variant="contained"
+              >
+                Submit
+              </Button>
+            </Stack>
+          </form>
         </Paper>
       </Container>
     </>
