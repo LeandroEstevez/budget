@@ -9,11 +9,12 @@ import Login from "./pages/Login";
 function App() {
   const [account, setAccount] = useState(null);
   const [expenses, setExpenses] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (account !== null) {
-      console.log("getting expenses")
       getExpenses(account.username);
+      getCategories();
     }
   }, [account]);
 
@@ -110,12 +111,46 @@ function App() {
       .catch((err) => {
         console.log("caught it!", err);
       });
-
-    console.log(res);
     setExpenses([...res]);
   };
 
-  // Update expenses
+  // Get categories of expenses from server
+  const getCategories = async () => {
+    const res = await fetch(
+      "http://localhost:8080/categories",
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${account.access_token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          return response.json();
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
+
+    // Extract string from object array
+    const arr = res.map((item) => {
+      return item.String
+    })
+    // remove duplicates
+    const filteredArr = arr.filter((item,
+      index) => arr.indexOf(item) === index);
+    console.log(filteredArr)
+    setCategories([...filteredArr]);
+  };
+
+  // Delete expense
   const deleteExpense = async (id) => {
     await fetch(`http://localhost:8080/deleteEntry/${id}`, {
       method: "DELETE",
@@ -137,6 +172,7 @@ function App() {
         console.log("caught it!", err);
       });
   };
+  // Edit expense
   const editExpense = async (item, name, dueDate, amount, category) => {
     let date = new Date(dueDate);
 
@@ -148,6 +184,8 @@ function App() {
       amount: parseFloat(amount),
       category: category
     };
+
+    console.log(body)
 
     const res = await fetch("http://localhost:8080/updateEntry", {
       method: "PATCH",
@@ -170,8 +208,11 @@ function App() {
         console.log("caught it!", err);
       });
 
+    console.log(res)
     updateExpenseArray(res);
   };
+
+  // Update expense state
   const updateExpenseArray = (editedExpense) => {
     let updatedExpenses = expenses;
     updatedExpenses.forEach((item, index) => {
@@ -182,6 +223,7 @@ function App() {
     });
     setExpenses([...updatedExpenses]);
   };
+  // Add expense to state
   const addExpense = (newExpense) => {
     setExpenses([...expenses, newExpense]);
   };
@@ -205,10 +247,12 @@ function App() {
             <Account
               account={account}
               expenses={expenses}
+              categories={categories}
               editExpense={editExpense}
               addExpense={addExpense}
               deleteExpense={deleteExpense}
               deleteAccount={deleteAccount}
+              getCategories={getCategories}
             />
           }
         ></Route>

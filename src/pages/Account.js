@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
 import "../App.css";
+import CreateExpense from "../components/CreateExpense";
 import Expenses from "../components/Expenses";
 
 const style = {
@@ -22,10 +23,12 @@ const style = {
 const Account = ({
   account,
   expenses,
+  categories,
   addExpense,
   deleteExpense,
   editExpense,
   deleteAccount,
+  getCategories
 }) => {
   const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState(false);
 
@@ -34,7 +37,6 @@ const Account = ({
       setDeleteAccountModalOpen(false);
     }
   };
-
 
   return (
     <Container maxWidth="md">
@@ -77,11 +79,19 @@ const Account = ({
           </Stack>
         </Box>
       </Modal>
+      <CreateExpense
+        account={account}
+        expenses={expenses}
+        addExpense={addExpense}
+        getCategories={getCategories}
+      ></CreateExpense>
       <Expenses account={account}
         expensesList={expenses}
+        categories={categories}
         addExpense={addExpense}
         editExpense={editExpense}
-        deleteExpense={deleteExpense} />
+        deleteExpense={deleteExpense}
+        getCategories={getCategories} />
     </Container>
   );
 };

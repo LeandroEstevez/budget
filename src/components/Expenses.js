@@ -1,26 +1,57 @@
-import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
-import CreateExpense from "../components/CreateExpense";
 import UpdateExpense from "../components/UpdateExpense";
+import Category from "./Category";
+import Expense from "./Expense";
+import Search from "./Search";
 
-const Expenses = ({ account, expensesList, addExpense, editExpense, deleteExpense }) => {
+const Expenses = ({ account, expensesList, categories, addExpense, editExpense, deleteExpense, getCategories }) => {
   const [order, setOrder] = useState("amount");
   const [targetExpense, setTargetExpense] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [searchField, setSearchField] = useState("");
+  const [arrObj, setArrObj] = useState([]);
 
-  console.log(searchField);
+  useEffect(() => {
+    getCategories();
+  }, [expensesList])
+
+  useEffect(() => {
+    let temp = [];
+    let key = "";
+    let arr = [];
+    for (let i = 0; i < expensesList.length; i++) {
+      if (expensesList[i].category.String === "") {
+        arr.push(expensesList[i])
+      }
+    }
+    if (arr.length > 0) {
+      let obj = {
+        key: key,
+        arr: arr
+      }
+      temp.push(obj)
+    }
+    for (let i = 0; i < categories.length; i++) {
+      let key = categories[i]
+      let arr = expensesList.filter(
+        (expense) => {
+          return (
+            expense.category.String === key
+          );
+        }
+      );
+      let obj = {
+        key: key,
+        arr: arr
+      }
+      temp.push(obj)
+    }
+    setArrObj([...temp]);
+  }, [categories]);
 
   const closeModal = (close) => {
     if (close) {
@@ -40,103 +71,103 @@ const Expenses = ({ account, expensesList, addExpense, editExpense, deleteExpens
   );
   const filteredDisplay = () =>
     filteredExpense.map((expense) => {
-      return (< ListItem key={expense.id} >
-        <ListItemText primary={expense.name} />
-        <ListItemText primary={expense.amount} />
-        <ListItemText primary={expense.due_date} />
-        <Button
-          variant="contained"
-          onClick={() => {
-            setTargetExpense({ ...expense });
-            setModalOpen(true);
-          }}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            deleteExpense(expense.id);
-          }}
-        >
-          Delete
-        </Button>
-      </ListItem >)
+      return (
+        <Expense
+          expense={expense}
+          setTargetExpense={setTargetExpense}
+          setModalOpen={setModalOpen}
+          deleteExpense={deleteExpense}>
+        </Expense>
+      )
     });
 
-  const sortEntries = (order, expensesList) => {
-    if (order === "amount") {
-      expensesList.sort((a, b) => {
-        if (a.amount < b.amount) {
-          return -1;
-        }
-        if (a.amount > b.amount) {
-          return 1;
-        }
+  // const sortEntries = (order, expensesList) => {
+  //   if (order === "amount") {
+  //     expensesList.sort((a, b) => {
+  //       if (a.amount < b.amount) {
+  //         return -1;
+  //       }
+  //       if (a.amount > b.amount) {
+  //         return 1;
+  //       }
 
-        return 0;
-      });
-      return expensesList;
-    } else if (order === "date") {
-      expensesList.sort((a, b) => {
-        const aDate = new Date(a.due_date);
-        const bDate = new Date(b.due_date);
-        if (aDate < bDate) {
-          return -1;
-        }
-        if (aDate > bDate) {
-          return 1;
-        }
+  //       return 0;
+  //     });
+  //     return expensesList;
+  //   } else if (order === "date") {
+  //     expensesList.sort((a, b) => {
+  //       const aDate = new Date(a.due_date);
+  //       const bDate = new Date(b.due_date);
+  //       if (aDate < bDate) {
+  //         return -1;
+  //       }
+  //       if (aDate > bDate) {
+  //         return 1;
+  //       }
 
-        return 0;
-      });
-      return expensesList;
-    } else if (order === "name") {
-      expensesList.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
+  //       return 0;
+  //     });
+  //     return expensesList;
+  //   } else if (order === "name") {
+  //     expensesList.sort((a, b) => {
+  //       if (a.name < b.name) {
+  //         return -1;
+  //       }
+  //       if (a.name > b.name) {
+  //         return 1;
+  //       }
 
-        return 0;
-      });
-      return expensesList;
-    }
-  };
-  const displayEntries = () => sortEntries(order, expensesList).map((item) => {
-    return (
-      <ListItem key={item.id}>
-        <ListItemText primary={item.name} />
-        <ListItemText primary={item.amount} />
-        <ListItemText primary={item.due_date} />
-        <Button
-          variant="contained"
-          onClick={() => {
-            setTargetExpense({ ...item });
-            setModalOpen(true);
-          }}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            deleteExpense(item.id);
-          }}
-        >
-          Delete
-        </Button>
-      </ListItem>
-    );
-  })
+  //       return 0;
+  //     });
+  //     return expensesList;
+  //   }
+  // };
+  const displayEntries = () => {
+    return arrObj.map((item) => {
+      return (
+        <Category
+          category={item}
+          setTargetExpense={setTargetExpense}
+          setModalOpen={setModalOpen}
+          deleteExpense={deleteExpense}>
+        </Category>
+      )
+    })
+  }
+  // sortEntries(order, expensesList).map((item) => {
+  //   return (
+  //     <ListItem key={item.id}>
+  //       <ListItemText primary={item.name} />
+  //       <ListItemText primary={item.amount} />
+  //       <ListItemText primary={item.due_date} />
+  //       <Button
+  //         variant="contained"
+  //         onClick={() => {
+  //           setTargetExpense({ ...item });
+  //           setModalOpen(true);
+  //         }}
+  //       >
+  //         Edit
+  //       </Button>
+  //       <Button
+  //         variant="contained"
+  //         onClick={() => {
+  //           deleteExpense(item.id);
+  //         }}
+  //       >
+  //         Delete
+  //       </Button>
+  //     </ListItem>
+  //   );
+  // }
+
+
   const displayList = () => {
     return (
       <List>
-        <Stack direction="row" spacing={2} className="mb-3 mt-5">
+        <Stack direction="row" spacing={2} className="mb-3">
           <h3>Expenses</h3>
-          <FormControl>
+          {/* <FormControl>
             <InputLabel id="select-label">Order By</InputLabel>
             <Select
               labelId="select-label"
@@ -151,21 +182,13 @@ const Expenses = ({ account, expensesList, addExpense, editExpense, deleteExpens
               <MenuItem value="date">Date</MenuItem>
               <MenuItem value="name">Name</MenuItem>
             </Select>
-          </FormControl>
-          <FormControl margin="normal" required={true}>
-            <TextField
-              label="Email"
-              variant="outlined"
-              onChange={(e) => {
-                setSearchField(e.target.value);
-              }}
-            />
-          </FormControl>
+          </FormControl> */}
+          <Search setSearchField={setSearchField}></Search>
         </Stack>
         {searchField !== "" ? filteredDisplay() : displayEntries()}
       </List>
     )
-  }
+  };
 
   return (
     <Paper elevation={3} className="account">
@@ -177,11 +200,6 @@ const Expenses = ({ account, expensesList, addExpense, editExpense, deleteExpens
           targetExpense={targetExpense}
         ></UpdateExpense>
       }
-      <CreateExpense
-        account={account}
-        expensesList={expensesList}
-        addExpense={addExpense}
-      ></CreateExpense>
       {expensesList.length !== 0 ? displayList() : null}
     </Paper>
   )

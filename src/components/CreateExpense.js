@@ -9,7 +9,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const CreateExpense = ({ account, addExpense }) => {
+const CreateExpense = ({ account, addExpense, getCategories }) => {
   const [name, setName] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [amount, setAmount] = useState("");
@@ -17,7 +17,6 @@ const CreateExpense = ({ account, addExpense }) => {
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = () => {
-    console.log(typeof category);
     createExpenseObject(name, dueDate, amount, category);
     setName("");
     setDueDate(new Date());
@@ -36,8 +35,6 @@ const CreateExpense = ({ account, addExpense }) => {
       amount: parseFloat(amount),
       category: category,
     };
-
-    console.log(JSON.stringify(newExpense));
 
     const res = await fetch("http://localhost:8080/entry", {
       method: "POST",
@@ -60,12 +57,11 @@ const CreateExpense = ({ account, addExpense }) => {
         console.log("caught it!", err);
       });
 
-    console.log(res.entry)
     addExpense(res.entry);
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" className="mt-5">
       <h1>Create expense</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>

@@ -26,7 +26,7 @@ const UpdateExpense = ({ isOpen, closeModal, editExpense, targetExpense }) => {
   const [name, setName] = useState(targetExpense.name);
   const [dueDate, setDueDate] = useState(targetExpense.due_date);
   const [amount, setAmount] = useState(targetExpense.amount.toString());
-  const [category, setCategory] = useState(targetExpense.category);
+  const [category, setCategory] = useState(targetExpense.category.String);
 
   console.log(targetExpense)
 
