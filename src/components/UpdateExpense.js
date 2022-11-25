@@ -28,8 +28,6 @@ const UpdateExpense = ({ isOpen, closeModal, editExpense, targetExpense }) => {
   const [amount, setAmount] = useState(targetExpense.amount.toString());
   const [category, setCategory] = useState(targetExpense.category.String);
 
-  console.log(targetExpense)
-
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = () => {
     editExpense(targetExpense, name, dueDate, amount, category);

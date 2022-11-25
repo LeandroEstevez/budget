@@ -146,7 +146,6 @@ function App() {
     // remove duplicates
     const filteredArr = arr.filter((item,
       index) => arr.indexOf(item) === index);
-    console.log(filteredArr)
     setCategories([...filteredArr]);
   };
 
@@ -185,8 +184,6 @@ function App() {
       category: category
     };
 
-    console.log(body)
-
     const res = await fetch("http://localhost:8080/updateEntry", {
       method: "PATCH",
       headers: {
@@ -207,8 +204,6 @@ function App() {
       .catch((err) => {
         console.log("caught it!", err);
       });
-
-    console.log(res)
     updateExpenseArray(res);
   };
 

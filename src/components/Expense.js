@@ -8,7 +8,7 @@ const Expense = ({ expense, setTargetExpense, setModalOpen, deleteExpense }) => 
     <ListItem key={expense.id}>
       <ListItemText primary={expense.name} />
       <ListItemText primary={expense.amount} />
-      <ListItemText primary={expense.due_date} />
+      <ListItemText primary={new Date(expense.due_date).toISOString().split('T')[0]} />
       <Button
         variant="contained"
         onClick={() => {

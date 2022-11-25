@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import CreateExpense from "../components/CreateExpense";
 import Expenses from "../components/Expenses";
@@ -30,6 +30,7 @@ const Account = ({
   deleteAccount,
   getCategories
 }) => {
+  const [totalExpenses, setTotalExpenses] = useState(0);
   const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState(false);
 
   const closeDeleteAccountMOdal = (close) => {
@@ -38,9 +39,16 @@ const Account = ({
     }
   };
 
+  useEffect(() => {
+    let total = 0;
+    expenses.forEach((expense) => {
+      total += expense.amount;
+    })
+    setTotalExpenses(total)
+  }, [expenses])
+
   return (
     <Container maxWidth="md">
-      {/* <NavBar></NavBar> */}
       <h1 className="mb-5 mt-5">Start adding your expenses</h1>
       <Button
         variant="contained"
@@ -50,7 +58,6 @@ const Account = ({
       >
         Delete Account
       </Button>
-      {/* Account deletion modal */}
       <Modal
         open={deleteAccountModalOpen}
         onClose={() => closeDeleteAccountMOdal(true)}
@@ -79,16 +86,19 @@ const Account = ({
           </Stack>
         </Box>
       </Modal>
+
       <CreateExpense
         account={account}
         expenses={expenses}
         addExpense={addExpense}
         getCategories={getCategories}
       ></CreateExpense>
-      <Expenses account={account}
+      <Stack direction="row" spacing={2} className="mb-3 mt-5">
+        <h3>Total Expenses: {totalExpenses}</h3>
+      </Stack>
+      <Expenses
         expensesList={expenses}
         categories={categories}
-        addExpense={addExpense}
         editExpense={editExpense}
         deleteExpense={deleteExpense}
         getCategories={getCategories} />

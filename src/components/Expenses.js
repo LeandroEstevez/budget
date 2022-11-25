@@ -8,8 +8,7 @@ import Category from "./Category";
 import Expense from "./Expense";
 import Search from "./Search";
 
-const Expenses = ({ account, expensesList, categories, addExpense, editExpense, deleteExpense, getCategories }) => {
-  const [order, setOrder] = useState("amount");
+const Expenses = ({ expensesList, categories, editExpense, deleteExpense, getCategories }) => {
   const [targetExpense, setTargetExpense] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [searchField, setSearchField] = useState("");
@@ -72,7 +71,7 @@ const Expenses = ({ account, expensesList, categories, addExpense, editExpense, 
   const filteredDisplay = () =>
     filteredExpense.map((expense) => {
       return (
-        <Expense
+        <Expense key={expense.id}
           expense={expense}
           setTargetExpense={setTargetExpense}
           setModalOpen={setModalOpen}
@@ -81,51 +80,10 @@ const Expenses = ({ account, expensesList, categories, addExpense, editExpense, 
       )
     });
 
-  // const sortEntries = (order, expensesList) => {
-  //   if (order === "amount") {
-  //     expensesList.sort((a, b) => {
-  //       if (a.amount < b.amount) {
-  //         return -1;
-  //       }
-  //       if (a.amount > b.amount) {
-  //         return 1;
-  //       }
-
-  //       return 0;
-  //     });
-  //     return expensesList;
-  //   } else if (order === "date") {
-  //     expensesList.sort((a, b) => {
-  //       const aDate = new Date(a.due_date);
-  //       const bDate = new Date(b.due_date);
-  //       if (aDate < bDate) {
-  //         return -1;
-  //       }
-  //       if (aDate > bDate) {
-  //         return 1;
-  //       }
-
-  //       return 0;
-  //     });
-  //     return expensesList;
-  //   } else if (order === "name") {
-  //     expensesList.sort((a, b) => {
-  //       if (a.name < b.name) {
-  //         return -1;
-  //       }
-  //       if (a.name > b.name) {
-  //         return 1;
-  //       }
-
-  //       return 0;
-  //     });
-  //     return expensesList;
-  //   }
-  // };
   const displayEntries = () => {
     return arrObj.map((item) => {
       return (
-        <Category
+        <Category key={item.key}
           category={item}
           setTargetExpense={setTargetExpense}
           setModalOpen={setModalOpen}
@@ -134,33 +92,6 @@ const Expenses = ({ account, expensesList, categories, addExpense, editExpense, 
       )
     })
   }
-  // sortEntries(order, expensesList).map((item) => {
-  //   return (
-  //     <ListItem key={item.id}>
-  //       <ListItemText primary={item.name} />
-  //       <ListItemText primary={item.amount} />
-  //       <ListItemText primary={item.due_date} />
-  //       <Button
-  //         variant="contained"
-  //         onClick={() => {
-  //           setTargetExpense({ ...item });
-  //           setModalOpen(true);
-  //         }}
-  //       >
-  //         Edit
-  //       </Button>
-  //       <Button
-  //         variant="contained"
-  //         onClick={() => {
-  //           deleteExpense(item.id);
-  //         }}
-  //       >
-  //         Delete
-  //       </Button>
-  //     </ListItem>
-  //   );
-  // }
-
 
   const displayList = () => {
     return (
