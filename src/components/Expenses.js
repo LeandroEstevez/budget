@@ -8,17 +8,24 @@ import Category from "./Category";
 import Expense from "./Expense";
 import Search from "./Search";
 
-const Expenses = ({ expensesList, categories, editExpense, deleteExpense, getCategories }) => {
+const Expenses = ({ account, expensesList, editExpense, deleteExpense }) => {
+  const [categories, setCategories] = useState([]);
   const [targetExpense, setTargetExpense] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [searchField, setSearchField] = useState("");
   const [arrObj, setArrObj] = useState([]);
 
   useEffect(() => {
-    getCategories();
+    if (account != null) {
+      getCategories();
+    }
   }, [expensesList])
 
   useEffect(() => {
+    organizeCategories();
+  }, [categories]);
+
+  const organizeCategories = () => {
     let temp = [];
     let key = "";
     let arr = [];
@@ -50,7 +57,42 @@ const Expenses = ({ expensesList, categories, editExpense, deleteExpense, getCat
       temp.push(obj)
     }
     setArrObj([...temp]);
-  }, [categories]);
+  }
+
+  // Get categories of expenses from server
+  const getCategories = async () => {
+    const res = await fetch(
+      "http://localhost:8080/categories",
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${account.access_token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          return response.json();
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
+
+    // Extract string from object array
+    const arr = res.map((item) => {
+      return item.String
+    })
+    // remove duplicates
+    const filteredArr = arr.filter((item,
+      index) => arr.indexOf(item) === index);
+    setCategories([...filteredArr]);
+  };
 
   const closeModal = (close) => {
     if (close) {
@@ -98,22 +140,6 @@ const Expenses = ({ expensesList, categories, editExpense, deleteExpense, getCat
       <List>
         <Stack direction="row" spacing={2} className="mb-3">
           <h3>Expenses</h3>
-          {/* <FormControl>
-            <InputLabel id="select-label">Order By</InputLabel>
-            <Select
-              labelId="select-label"
-              id="select"
-              value={order}
-              label="Order By"
-              onChange={(e) => {
-                setOrder(e.target.value);
-              }}
-            >
-              <MenuItem value="amount">Amount</MenuItem>
-              <MenuItem value="date">Date</MenuItem>
-              <MenuItem value="name">Name</MenuItem>
-            </Select>
-          </FormControl> */}
           <Search setSearchField={setSearchField}></Search>
         </Stack>
         {searchField !== "" ? filteredDisplay() : displayEntries()}

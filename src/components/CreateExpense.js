@@ -9,7 +9,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const CreateExpense = ({ account, addExpense, getCategories }) => {
+const CreateExpense = ({ account, addExpense }) => {
   const [name, setName] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [amount, setAmount] = useState("");

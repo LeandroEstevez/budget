@@ -5,16 +5,15 @@ import "./App.css";
 import Account from "./pages/Account";
 import CreateAccount from "./pages/CreateAccount";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const [account, setAccount] = useState(null);
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     if (account !== null) {
       getExpenses(account.username);
-      getCategories();
     }
   }, [account]);
 
@@ -114,41 +113,6 @@ function App() {
     setExpenses([...res]);
   };
 
-  // Get categories of expenses from server
-  const getCategories = async () => {
-    const res = await fetch(
-      "http://localhost:8080/categories",
-      {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${account.access_token}`,
-        },
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(text);
-          });
-        } else {
-          return response.json();
-        }
-      })
-      .catch((err) => {
-        console.log("caught it!", err);
-      });
-
-    // Extract string from object array
-    const arr = res.map((item) => {
-      return item.String
-    })
-    // remove duplicates
-    const filteredArr = arr.filter((item,
-      index) => arr.indexOf(item) === index);
-    setCategories([...filteredArr]);
-  };
-
   // Delete expense
   const deleteExpense = async (id) => {
     await fetch(`http://localhost:8080/deleteEntry/${id}`, {
@@ -227,6 +191,7 @@ function App() {
 
   return (
     <Container maxWidth="md">
+      {console.log("Rendering App Component")}
       <Routes>
         <Route
           path="/"
@@ -242,13 +207,17 @@ function App() {
             <Account
               account={account}
               expenses={expenses}
-              categories={categories}
               editExpense={editExpense}
               addExpense={addExpense}
               deleteExpense={deleteExpense}
               deleteAccount={deleteAccount}
-              getCategories={getCategories}
             />
+          }
+        ></Route>
+        <Route
+          path="resetpassword/:token"
+          element={
+            <ResetPassword />
           }
         ></Route>
       </Routes>

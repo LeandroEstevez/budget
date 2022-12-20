@@ -1,3 +1,4 @@
+import Alert from '@mui/material/Alert';
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import FormControl from "@mui/material/FormControl";
@@ -7,14 +8,23 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import ForgotPassword from "../components/ForgotPassword";
 
 const Login = ({ setAccount }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [credentialsInvalid, setCredentialsInvalid] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [forgotPasswordEmailSuccess, setForgotPasswordEmailSuccess] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = () => login(userName, password);;
+  const onSubmit = () => login(userName, password);
+
+  const closeModal = (close) => {
+    if (close) {
+      setModalOpen(false);
+    }
+  };
 
   // Login into an account
   const login = async (userName, password) => {
@@ -52,11 +62,52 @@ const Login = ({ setAccount }) => {
     }
   };
 
+  // Login into an account
+  const forgotPassword = async (userName) => {
+    const body = {
+      username: userName,
+    };
+
+    const res = await fetch("http://localhost:8080/forgotpassword", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          return response.json();
+        }
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
+      });
+
+    let data = await res;
+    if (data !== undefined) {
+      setForgotPasswordEmailSuccess(true);
+    }
+  };
+
   const navigate = useNavigate();
 
   return (
     <>
       <Container maxWidth="sm">
+        {forgotPasswordEmailSuccess && <Alert onClose={() => { setForgotPasswordEmailSuccess(false) }}>Reset password email successfully sent!!</Alert>}
+        {
+          modalOpen && <ForgotPassword
+            isOpen={modalOpen}
+            closeModal={closeModal}
+            forgotPassword={forgotPassword}
+            forgotPasswordEmailSuccess={forgotPasswordEmailSuccess}
+          ></ForgotPassword>
+        }
         <Paper elevation={3} className="login">
           <Stack direction="row" spacing={2}>
             <h1>Log In</h1>
@@ -98,6 +149,9 @@ const Login = ({ setAccount }) => {
               >
                 Submit
               </Button>
+              <Button variant="text" onClick={() => {
+                setModalOpen(true);
+              }}>Forgot Password</Button>
             </Stack>
           </form>
         </Paper>

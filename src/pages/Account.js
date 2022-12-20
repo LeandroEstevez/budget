@@ -23,12 +23,10 @@ const style = {
 const Account = ({
   account,
   expenses,
-  categories,
   addExpense,
   deleteExpense,
   editExpense,
-  deleteAccount,
-  getCategories
+  deleteAccount
 }) => {
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState(false);
@@ -91,17 +89,15 @@ const Account = ({
         account={account}
         expenses={expenses}
         addExpense={addExpense}
-        getCategories={getCategories}
       ></CreateExpense>
       <Stack direction="row" spacing={2} className="mb-3 mt-5">
         <h3>Total Expenses: {totalExpenses}</h3>
       </Stack>
       <Expenses
+        account={account}
         expensesList={expenses}
-        categories={categories}
         editExpense={editExpense}
-        deleteExpense={deleteExpense}
-        getCategories={getCategories} />
+        deleteExpense={deleteExpense} />
     </Container>
   );
 };
