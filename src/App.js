@@ -37,7 +37,7 @@ function App() {
       password: password,
     };
 
-    const res = await fetch("http://localhost:8080/user", {
+    const res = await fetch("https://yourbudgetapp.com/user", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -63,7 +63,7 @@ function App() {
 
   // Delete Acccount
   const deleteAccount = async (username) => {
-    await fetch(`http://localhost:8080/deleteUser/${username}`, {
+    await fetch(`https://yourbudgetapp.com/deleteUser/${username}`, {
       method: "DELETE",
       headers: {
         "Content-type": "application/json",
@@ -89,7 +89,7 @@ function App() {
   // Get expenses from server
   const getExpenses = async (username) => {
     const res = await fetch(
-      `http://localhost:8080/entries?username=${username}`,
+      `https://yourbudgetapp.com/entries?username=${username}`,
       {
         method: "GET",
         headers: {
@@ -115,7 +115,7 @@ function App() {
 
   // Delete expense
   const deleteExpense = async (id) => {
-    await fetch(`http://localhost:8080/deleteEntry/${id}`, {
+    await fetch(`https://yourbudgetapp.com/deleteEntry/${id}`, {
       method: "DELETE",
       headers: {
         "Content-type": "application/json",
@@ -135,6 +135,7 @@ function App() {
         console.log("caught it!", err);
       });
   };
+
   // Edit expense
   const editExpense = async (item, name, dueDate, amount, category) => {
     let date = new Date(dueDate);
@@ -148,7 +149,7 @@ function App() {
       category: category
     };
 
-    const res = await fetch("http://localhost:8080/updateEntry", {
+    const res = await fetch("https://yourbudgetapp.com/updateEntry", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -182,6 +183,7 @@ function App() {
     });
     setExpenses([...updatedExpenses]);
   };
+  
   // Add expense to state
   const addExpense = (newExpense) => {
     setExpenses([...expenses, newExpense]);

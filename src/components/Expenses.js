@@ -17,7 +17,7 @@ const Expenses = ({ account, expensesList, editExpense, deleteExpense }) => {
 
   useEffect(() => {
     if (account != null) {
-      getCategories();
+      getCategories(account.username);
     }
   }, [expensesList])
 
@@ -60,9 +60,9 @@ const Expenses = ({ account, expensesList, editExpense, deleteExpense }) => {
   }
 
   // Get categories of expenses from server
-  const getCategories = async () => {
+  const getCategories = async (username) => {
     const res = await fetch(
-      "http://localhost:8080/categories",
+      `https://yourbudgetapp.com/categories?username=${username}`,
       {
         method: "GET",
         headers: {
@@ -88,6 +88,7 @@ const Expenses = ({ account, expensesList, editExpense, deleteExpense }) => {
     const arr = res.map((item) => {
       return item.String
     })
+    console.log(arr);
     // remove duplicates
     const filteredArr = arr.filter((item,
       index) => arr.indexOf(item) === index);

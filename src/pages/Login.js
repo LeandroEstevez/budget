@@ -33,7 +33,7 @@ const Login = ({ setAccount }) => {
       password: password,
     };
 
-    const res = await fetch("http://localhost:8080/user/login", {
+    const res = await fetch("https://yourbudgetapp.com/user/login", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -68,7 +68,7 @@ const Login = ({ setAccount }) => {
       username: userName,
     };
 
-    const res = await fetch("http://localhost:8080/forgotpassword", {
+    const res = await fetch("https://yourbudgetapp.com/forgotpassword", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

@@ -43,7 +43,7 @@ const CreateAccount = ({ createAccount }) => {
             <Stack spacing={2}>
               <FormControl margin="normal" required={true}>
                 <TextField
-                  {...register("username", { required: "This is required", minLength: { value: 6, message: "Minimum length is 6 characters" }, maxLength: { value: 10, message: "Minimum length is 10 characters" }, pattern: { value: /^\w+$/, message: "User name must be in alphanumeric characters" } })}
+                  {...register("username", { required: "This is required", minLength: { value: 1, message: "Minimum length is 6 characters" }, maxLength: { value: 15, message: "Maximun length is 15 characters" }, pattern: { value: /^\w+$/, message: "User name must be in alphanumeric characters" } })}
                   error={!!errors?.username}
                   helperText={errors?.username ? errors.username.message : null}
                   label="Username"
@@ -55,7 +55,7 @@ const CreateAccount = ({ createAccount }) => {
               </FormControl>
               <FormControl margin="normal" required={true}>
                 <TextField
-                  {...register("fullName", { required: "This is required", pattern: { value: /^[a-zA-Z]*$/, message: "User name must be in unicode characters" } })}
+                  {...register("fullName", { required: "This is required", pattern: { value: /^\w+( \w+)*$/, message: "Full name must be in unicode characters" } })}
                   error={!!errors?.fullName}
                   helperText={errors?.fullName ? errors.fullName.message : null}
                   label="Full Name"

@@ -36,7 +36,7 @@ const CreateExpense = ({ account, addExpense }) => {
       category: category,
     };
 
-    const res = await fetch("http://localhost:8080/entry", {
+    const res = await fetch("https://yourbudgetapp.com/entry", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -67,7 +67,7 @@ const CreateExpense = ({ account, addExpense }) => {
         <Stack spacing={2}>
           <FormControl>
             <TextField
-              {...register("name", { required: "This is required", minLength: { value: 6, message: "Minimum length is 6 characters" }, maxLength: { value: 10, message: "Minimum length is 10 characters" }, pattern: { value: /^[a-zA-Z]*$/, message: "Expense name must be in unicode characters" } })}
+              {...register("name", { required: "This is required", minLength: { value: 1, message: "Minimum length is 1 characters" }, maxLength: { value: 15, message: "Maximum length is 15 characters" }, pattern: { value: /^[a-zA-Z0-9]*$/, message: "Expense name must be in unicode characters" } })}
               error={!!errors?.name}
               helperText={errors?.name ? errors.name.message : null}
               label="Name"

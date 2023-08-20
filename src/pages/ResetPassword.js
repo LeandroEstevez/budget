@@ -28,7 +28,7 @@ const ResetPassword = () => {
       password: password,
     };
 
-    const res = await fetch("http://localhost:8080/resetPassword", {
+    const res = await fetch("https://yourbudgetapp.com/resetPassword", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
